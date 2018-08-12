@@ -1,4 +1,4 @@
-# Authors: Tyler Schlieder
+
 # coding: utf-8
 
 # In[1]:
@@ -40,10 +40,10 @@ TEData_numpy=TE_Data.as_matrix() #converts TEData from panda series to a numpy a
     variable. This can be used to isolate a specific portion of the compositional profile that is targeted for the diffusion
     model."""
 
-Srdata = TEData_numpy[:,5] #assigns all of column 1 (second column) from TEData_numpy to variable Srdata
+Srdata = TEData_numpy[:,3] #assigns all of column 1 (second column) from TEData_numpy to variable Srdata
 Sr_array = Srdata[:61] #This extracts only the first 19 values from the Srdata array to be used in the subsequent model
 
-Sr_err = TEData_numpy[:,6] #assigns all of column 3 (fourth column) from TEData_numpy to variable Sr_err
+Sr_err = TEData_numpy[:,4] #assigns all of column 3 (fourth column) from TEData_numpy to variable Sr_err
 Sr_SE = Sr_err[:61] #This extracts only the first 19 values from the Sr_err array to be used in the subsequent model
 
 An = TEData_numpy[:,1] #assigns all of column 3 (third column) from TEData_numpy to variable An
@@ -78,9 +78,9 @@ BSr = 28500 #+/- 700 J/mol constant in J/mol for Sr partitioning into plagioclas
 #Variable Variables
 Tc = 900 #T in C
 T = Tc + 273.15 #T in Kelvin
-dt = 0.1*60*60*24*365 #timestep in seconds. (Note all these need to be in SI units). First term is T in years.
-tfin = 100*60*60*24*365 #final time in seconds. (Note all these need to be in SI units). First term is T in years.
-dx = 5e-6 #delta x in m (Note all these need to be in SI units)
+courant = 0.1 #timestep in seconds. (Note all these need to be in SI units). First term is T in years.
+tfin = 10*60*60*24*365 #final time in seconds. (Note all these need to be in SI units). First term is T in years.
+dx = 1e-6 #delta x in m (Note all these need to be in SI units)
 
 
 # In[5]:
@@ -125,14 +125,12 @@ D_Sr = (10**-(4.1*X_An_Fill+4.08))*(exp(-3.32*(10**4/T))) #calculates the diffus
 DSr_H = 2*D_Sr #Upper bound on Sr diffusivity based on statement in Zellmer (2003) The Sr diffusivity has uncertainty of a factor of ~2 based on 2 sigma uncertaintly of Giletti and Casserly (1994)   
 DSr_L = 0.5*D_Sr #Lower bound of Sr diffusivity based on statement in Zellmer (2003) The Sr diffusivity has uncertainty of a factor of ~2 based on 2 sigma uncertaintly of Giletti and Casserly (1994)
 
+D_Sr_min = amin(D_Sr)
+D_Sr_max = amax(D_Sr)
 
-Courant_condition = D_Sr*(dt/dx**2)
-if any(Courant_condition > 0.5):
-    print("Courant Condition Failed")
-else:
-    print("Courant Condition Passed")
+dt = (courant*(dx**2))/D_Sr_max
+print(dt)
 
-#print (Courant_condition)
 
 
 # In[11]:
@@ -382,8 +380,8 @@ PP.plot(Dist_array, Best_fit_prof, 'b-',linewidth=2, label = 'Best Fit Prof.')
 PP.xlabel('Distance [mircons]') #adds x axis label
 PP.ylabel('Sr [ppm]') #adds y axis label
 #PP.text(155, 900, '$\chi^2$ = {:0.2f}'.format(Chi_min))
-PP.text(90, 130, 'Range = {:0.1f}-{:0.1f} yrs'.format(p5, p95))
-PP.text(90, 140, 'Mean Best Fit = {:0.1f} yrs'.format(Mean_BestFit))
+PP.text(90, 130, 'Range = {:0.2f}-{:0.2f} yrs'.format(p5, p95))
+PP.text(90, 140, 'Mean Best Fit = {:0.3f} yrs'.format(Mean_BestFit))
 #PP.legend(loc = 'best')
 #PP.savefig('MSH 304 Plag6-S2.tif') #Saves figure as what every file type you specify.
 PP.show()
