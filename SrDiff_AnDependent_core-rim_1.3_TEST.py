@@ -25,7 +25,7 @@ mpl.rc('font', **font)
 # In[2]:
 
 #Uses Pandas(pd.) to read the excel file titled 'Sr_Diff_Model_Input.xls' and specifically sheet 'TE_Data' and set it to variable TEData
-TE_Data = pd.read_excel(open('Diffusion analytical solution.xlsx','rb'), sheet_name='Model Input', usecols = "A, B, C, D, E, F, G, H, I, J, K")
+TE_Data = pd.read_excel(open('Diffusion_analytical_solution.xlsx','rb'), sheet_name='Model Input', usecols = "A, B, C, D, E, F, G, H, I, J, K")
 
 TEData_numpy=TE_Data.as_matrix() #converts TEData from panda series to a numpy array and assigns data to TEData_numpy
 
@@ -78,9 +78,9 @@ BSr = 28500 #+/- 700 J/mol constant in J/mol for Sr partitioning into plagioclas
 #Variable Variables
 Tc = 900 #T in C
 T = Tc + 273.15 #T in Kelvin
-courant = 0.1 #timestep in seconds. (Note all these need to be in SI units). First term is T in years.
+courant = 0.5 #timestep in seconds. (Note all these need to be in SI units). First term is T in years.
 tfin = 10*60*60*24*365 #final time in seconds. (Note all these need to be in SI units). First term is T in years.
-dx = 1e-6 #delta x in m (Note all these need to be in SI units)
+dx = 2e-6 #delta x in m (Note all these need to be in SI units)
 
 
 # In[5]:
